@@ -1,130 +1,127 @@
-var searchInput = document.getElementById("searchInput");
-var searchButton = document.getElementById("searchButton");
-var resultsContainer = document.getElementById("resultsContainer");
-var form = document.getElementById("form");
-var refresh = document.querySelector(".refresh");
-var errEl = document.getElementById("err");
-var loading = document.querySelector('.loading');
-var imageType = document.getElementById("imageType");
-var colorFilter = document.getElementById("colorFilter");
-var paginationContainer = document.getElementById("paginationContainer");
-var historyContainer = document.getElementById("historyContainer");
-var favoritesContainer = document.getElementById("favoritesContainer");
-var MAX_RESULTS_PER_PAGE = 10;
+const searchInput = document.getElementById("searchInput");
+const searchButton = document.getElementById("searchButton");
+const resultsContainer = document.getElementById("resultsContainer");
+const form = document.getElementById("form");
+const refresh = document.querySelector(".refresh");
+const errEl = document.getElementById("err");
+const loading = document.querySelector('.loading');
+const imageType = document.getElementById("imageType");
+const colorFilter = document.getElementById("colorFilter");
+const paginationContainer = document.getElementById("paginationContainer");
+const historyContainer = document.getElementById("historyContainer");
+const favoritesContainer = document.getElementById("favoritesContainer");
+const MAX_RESULTS_PER_PAGE = 10;
 
 searchButton.addEventListener("click", searchImages);
-form.addEventListener("submit", function(e) {
+form.addEventListener("submit", e => {
   e.preventDefault();
   searchImages();
 });
 
-function showLoadingAnimation() {
+const showLoadingAnimation = () => {
   resultsContainer.innerHTML = '<div id="load"><div class="loader"></div></div>';
   loading.style.display = 'flex';
 }
 
-function hideLoadingAnimation() {
+const hideLoadingAnimation = () => {
   loading.style.display = 'none';
 }
 
-function searchImages() {
-  var query = searchInput.value;
-  var type = imageType.value;
-  var color = colorFilter.checked ? "purple" || "orange" || "purple" : "black";
-  var url = `https://pixabay.com/api/?key=38258547-06fd9b1b7822176548228c8b2&q=${query}&image_type=${type}&colors=${color}`;
+const searchImages = async () => {
+  const query = searchInput.value;
+  const type = imageType.value;
+  const apiKey = "38258547-06fd9b1b7822176548228c8b2";
+  const color = colorFilter.checked ? "purple" || "orange" || "purple" : "black";
+  const url = `https://pixabay.com/api/?key=${apiKey}&q=${query}&image_type=${type}&colors=${color}`;
 
   if (query) {
     showLoadingAnimation();
 
-    fetch(url)
-      .then(function(response) {
-        return response.json();
-      })
-      .then(function(data) {
-        var hits = data.hits;
-        resultsContainer.innerHTML = "";
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      const hits = data.hits;
+      resultsContainer.innerHTML = "";
 
-        hits.forEach(function(hit) {
-          var img = document.createElement("img");
-          img.src = hit.webformatURL;
-          img.classList.add("centered-image");
-          resultsContainer.appendChild(img);
-        });
-
-        hideLoadingAnimation();
-        displayPagination(hits);
-        displaySearchHistory(query);
-      })
-      .catch(function(error) {
-        console.log(error);
-        resultsContainer.innerHTML = `<h3>An error occurred while loading: ${query} from pixabay.com</h3><h3>Check the console for more details.</h3>`;
-        hideLoadingAnimation();
+      hits.forEach(hit => {
+        const img = document.createElement("img");
+        img.src = hit.webformatURL;
+        img.classList.add("centered-image");
+        resultsContainer.appendChild(img);
       });
+
+      hideLoadingAnimation();
+      displayPagination(hits);
+      displaySearchHistory(query);
+    } catch (error) {
+      console.log(error);
+      resultsContainer.innerHTML = `<h3>An error occurred while loading: ${query} from pixabay.com</h3>`;
+      hideLoadingAnimation();
+    }
   }
 
   searchInput.value = "";
   searchInput.focus();
 }
 
-function displayPagination(hits) {
-  var numPages = Math.ceil(hits.length / MAX_RESULTS_PER_PAGE);
+const displayPagination = hits => {
+  const numPages = Math.ceil(hits.length / MAX_RESULTS_PER_PAGE);
   paginationContainer.innerHTML = "";
 
-  for (var i = 0; i < numPages; i++) {
-    var button = document.createElement("button");
+  for (let i = 0; i < numPages; i++) {
+    const button = document.createElement("button");
     button.innerText = i + 1;
-    button.addEventListener("click", function() {
-      var startIndex = i * MAX_RESULTS_PER_PAGE;
-      var endIndex = startIndex + MAX_RESULTS_PER_PAGE;
+    button.addEventListener("click", () => {
+      const startIndex = i * MAX_RESULTS_PER_PAGE;
+      const endIndex = startIndex + MAX_RESULTS_PER_PAGE;
       displayResults(hits.slice(startIndex, endIndex));
     });
     paginationContainer.appendChild(button);
   }
 }
 
-function displayResults(results) {
+const displayResults = results => {
   resultsContainer.innerHTML = "";
 
-  results.forEach(function(result) {
-    var img = document.createElement("img");
+  results.forEach(result => {
+    const img = document.createElement("img");
     img.src = result.webformatURL;
     img.classList.add("centered-image");
     resultsContainer.appendChild(img);
   });
 }
 
-function displaySearchHistory(query) {
-  var history = JSON.parse(localStorage.getItem("searchHistory")) || [];
+const displaySearchHistory = query => {
+  const history = JSON.parse(localStorage.getItem("searchHistory")) || [];
   history.push(query);
   localStorage.setItem("searchHistory", JSON.stringify(history));
 
   historyContainer.innerHTML = "";
 
-  history.forEach(function(query) {
-    var button = document.createElement("button");
+  history.forEach(query => {
+    const button = document.createElement("button");
     button.innerText = query;
-    button.addEventListener("click", function() {
+    button.addEventListener("click", () => {
       searchInput.value = query;
       searchImages();
     });
     historyContainer.appendChild(button);
-
   });
 }
 
-function displayFavorites() {
-  var favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+const displayFavorites = () => {
+  const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
   favoritesContainer.innerHTML = "";
 
-  favorites.forEach(function(favorite) {
-    var img = document.createElement("img");
+  favorites.forEach(favorite => {
+    const img = document.createElement("img");
     img.src = favorite.webformatURL;
     img.classList.add("centered-image");
     favoritesContainer.appendChild(img);
   });
 }
 
-window.addEventListener("DOMContentLoaded", function() {
+window.addEventListener("DOMContentLoaded", () => {
   searchImages();
   displayFavorites();
 });
