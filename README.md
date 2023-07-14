@@ -20,7 +20,7 @@ This is a web application that allows users to search for images using the Pexel
 
 ### Getting Started
 
-To use this app, you will need to obtain an API key from Pexels. Once you have your API key, you can replace the `API_KEY` variable in the `app.js` file with your own API key.
+To use this app, you will need to obtain an API key from Pexels. Once you have your API key, you can replace the `API_KEY` variable in the `main.js` file with your own API key.
 
 javascript
 
