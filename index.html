@@ -12,11 +12,28 @@
     <h1>Image Search App</h1>
     <form id="form">
       <input type="text" id="searchInput" placeholder="Enter search query" value="dogs">
+      <select id="imageType">
+        <option value="photo">Photo</option>
+        <option value="illustration">Illustration</option>
+        <option value="vector">Vector</option>
+      </select>
+      <label for="colorFilter">Filter by color:</label>
+      <input type="checkbox" id="colorFilter" name="colorFilter" value="true">
       <button id="searchButton">Search</button>
     </form>
   </div>
-  <div id="resultsContainer">
+
+  <div id="resultsContainer"></div>
+  
+  <div class="loading">
+    <p class="loading-text">Loading...</p>
   </div>
+
+  <div id="paginationContainer"></div>
+
+  <div id="historyContainer"></div>
+
+  <div id="favoritesContainer"></div>
 
   <script src="main.js"></script>
 </body>
